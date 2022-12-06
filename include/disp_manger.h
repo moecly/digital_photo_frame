@@ -55,7 +55,7 @@ int flush_one_video_mem_to_dev(disp_ops *dp_ops, video_mem *vd_mem);
 void register_display(disp_ops *dops);
 void display_system_register(void);
 void free_video_mem(void);
-int alloc_video_mem(int num, disp_buff *dp_buff);
+int alloc_video_mem(int num);
 void put_video_mem(video_mem *vd_mem);
 int display_system_init(void);
 int flush_display_region(region *rgn, disp_ops *dp_ops, disp_buff *dp_buff);

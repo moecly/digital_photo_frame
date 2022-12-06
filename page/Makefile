@@ -1,8 +1,8 @@
 EXTRA_CFLAGS  := 
 CFLAGS_file.o := 
 
-# obj-y += page_manger.o
-# obj-y += main_page.o
+obj-y += page_manger.o
+obj-y += main_page.o
 # obj-y += auto_page.o
 # obj-y += browse_page.o
 # obj-y += exprole_page.o

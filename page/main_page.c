@@ -12,6 +12,16 @@
 #include <string.h>
 #include <ui.h>
 
+static int show_main_page(button *btn);
+static int main_page_on_draw(struct button *btn, unsigned int color,
+                             char *pic_name);
+static int browse_mode_on_pressed(struct button *btn, input_event *ievt);
+static int continue_mode_on_pressed(struct button *btn, input_event *ievt);
+static int setting_on_pressed(struct button *btn, input_event *ievt);
+
+/*
+ * button config.
+ */
 static button btn_layout[] = {
     {
         .pic =
@@ -19,13 +29,17 @@ static button btn_layout[] = {
                 .pic_name = "browse_mode.bmp",
                 .rgn = {0, 0, 0, 0},
             },
+        .on_draw = main_page_on_draw,
+        .on_pressed = browse_mode_on_pressed,
     },
     {
         .pic =
             {
-                .pic_name = "continue_mode.bmp",
+                .pic_name = "continue_mod.bmp",
                 .rgn = {0, 0, 0, 0},
             },
+        .on_draw = main_page_on_draw,
+        .on_pressed = continue_mode_on_pressed,
     },
     {
         .pic =
@@ -33,20 +47,167 @@ static button btn_layout[] = {
                 .pic_name = "setting.bmp",
                 .rgn = {0, 0, 0, 0},
             },
+        .on_draw = main_page_on_draw,
+        .on_pressed = setting_on_pressed,
+    },
+    {
+        .pic =
+            {
+                .pic_name = NULL,
+            },
     },
 };
 
+/*
+ * main page on draw.
+ */
+static int main_page_on_draw(struct button *btn, unsigned int color,
+                             char *pic_name) {
+  disp_buff origin_icon_buff;
+  disp_buff icon_buff;
+  disp_ops *dp_ops = get_display_ops_from_name(LCD_NAME);
+  disp_buff dp_buff;
+  char icon_name[128];
+  char *name;
+  unsigned int icon_width, icon_height;
+  unsigned int icon_x, icon_y;
+  int ret;
+
+  if (!dp_ops)
+    goto err_get_display_ops_from_name;
+
+  /*
+   * get display buffer.
+   */
+  ret = get_display_buffer(dp_ops, &dp_buff);
+  if (ret)
+    goto err_get_display_buffer;
+
+  /*
+   * set buff params.
+   */
+  name = pic_name != NULL ? pic_name : btn->pic.pic_name;
+  snprintf(icon_name, 128, "%s/%s", ICON_PATH, name);
+  icon_name[127] = '\0';
+
+  /*
+   * get icon display buffer.
+   */
+  set_disp_buff_bpp(&origin_icon_buff, dp_buff.bpp);
+  ret = get_disp_buff_for_icon(&origin_icon_buff, icon_name);
+  if (ret)
+    goto err_get_disp_buff_for_icon;
+
+  /*
+   * zoom picture.
+   */
+  get_button_rgn_data(btn, &icon_x, &icon_y, &icon_width, &icon_height);
+  setup_disp_buff(&icon_buff, icon_width, icon_height, dp_buff.bpp, NULL);
+  icon_buff.buff = malloc(icon_buff.total_size);
+  if (!icon_buff.buff)
+    goto err_malloc;
+
+  ret = pic_zoom(&origin_icon_buff, &icon_buff);
+  if (ret)
+    goto err_pic_zoom;
+
+  /*
+   * merge picture.
+   */
+  ret = pic_merge(icon_x, icon_y, &icon_buff, &dp_buff);
+  if (ret)
+    goto err_pic_merge;
+
+  return 0;
+
+err_pic_merge:
+err_pic_zoom:
+  free_disp_buff_for_icon(&icon_buff);
+err_malloc:
+  free_disp_buff_for_icon(&origin_icon_buff);
+err_get_disp_buff_for_icon:
+err_get_display_buffer:
+err_get_display_ops_from_name:
+  return -1;
+}
+
+static int browse_mode_on_pressed(struct button *btn, input_event *ievt) {
+  if (ievt == INPUT_RELEASE)
+    press_button(btn);
+  else
+    release_button(btn);
+  // page("browse")->run(NULL);
+  // show_main_page(btn_layout);
+  return 0;
+}
+
+static int continue_mode_on_pressed(struct button *btn, input_event *ievt) {
+  page("auto")->run(NULL);
+  show_main_page(btn_layout);
+  return 0;
+}
+
+static int setting_on_pressed(struct button *btn, input_event *ievt) {
+  page("setting")->run(NULL);
+  show_main_page(btn_layout);
+  return 0;
+}
+
+/*
+ * from input event get btn.
+ */
+static button *from_input_event_get_btn(button *btn, input_event *ievt) {
+  /*
+   * detection fb input.
+   */
+  while (btn) {
+    if (ievt->x >= btn->pic.rgn.left_up_x &&
+        ievt->x <= btn->pic.rgn.left_up_x + btn->pic.rgn.width &&
+        ievt->y >= btn->pic.rgn.left_up_y &&
+        ievt->y <= btn->pic.rgn.left_up_y + btn->pic.rgn.height) {
+      return btn;
+    }
+
+    btn++;
+  }
+
+  return NULL;
+}
+
+/*
+ * get main page input event.
+ */
+static int main_page_get_input_event(button *btn, input_event *ievt) {
+  int ret;
+
+  /*
+   * filter event.
+   */
+  ret = get_input_event(ievt);
+
+  if (ret)
+    goto err_get_input_event;
+
+  if (ievt->type != INPUT_TYPE_TOUCH)
+    goto err_input_event;
+
+  return 0;
+
+err_input_event:
+err_get_input_event:
+  return -1;
+}
+
+/*
+ * show main page.
+ */
 static int show_main_page(button *btn) {
   int ret;
   video_mem *vd_mem;
-  disp_ops *dp_ops_que = get_disp_queue();
   disp_ops *dp_ops;
   disp_buff dp_buff;
-  disp_buff origin_icon_buff;
-  disp_buff icon_buff;
   int icon_width, icon_height;
   int icon_x, icon_y;
-  char icon_name[128];
 
   vd_mem = get_video_mem(ID("main"), 1);
   if (!vd_mem) {
@@ -58,56 +219,30 @@ static int show_main_page(button *btn) {
    * draw.
    */
   if (vd_mem->pic_status != PS_GENERATED) {
-    for_each_node(dp_ops_que, dp_ops) {
-      ret = get_display_buffer(dp_ops, &dp_buff);
-      if (ret)
-        goto err_get_disp_buff;
+    /*
+     * only lcd.
+     */
+    dp_ops = get_display_ops_from_name(LCD_NAME);
+    if (!dp_ops)
+      goto err_get_display_ops_from_name;
 
-      icon_height = dp_buff.yres * 2 / 10;
-      icon_width = icon_height * 2;
-      icon_x = (dp_buff.xres - icon_width) / 2;
-      icon_y = dp_buff.yres / 10;
+    ret = get_display_buffer(dp_ops, &dp_buff);
+    if (ret)
+      goto err_get_disp_buff;
 
-      /*
-       * set icon params.
-       */
-      setup_disp_buff(&icon_buff, icon_width, icon_height, dp_buff.bpp, NULL);
-      icon_buff.buff = malloc(sizeof(icon_buff.total_size));
-      if (!icon_buff.buff)
-        goto err_malloc;
+    icon_height = dp_buff.yres * 2 / 10;
+    icon_width = icon_height * 2;
+    icon_x = (dp_buff.xres - icon_width) / 2;
+    icon_y = dp_buff.yres / 10;
 
-      /*
-       * display each button.
-       */
-      while (btn) {
-        btn->pic.rgn.left_up_x = icon_x;
-        btn->pic.rgn.left_up_y = icon_y;
-        btn->pic.rgn.width = icon_width;
-        btn->pic.rgn.height = icon_height;
-        snprintf(icon_name, 128, "%s/%s", ICON_PATH, btn->pic.pic_name);
-
-        set_disp_buff_bpp(&origin_icon_buff, dp_buff.bpp);
-        ret = get_disp_buff_for_icon(&origin_icon_buff, icon_name);
-        if (ret)
-          goto err_get_disp_buff_for_icon;
-
-        ret = pic_zoom(&origin_icon_buff, &icon_buff);
-        if (ret)
-          goto err_pic_zoom;
-
-        ret = pic_merge(icon_x, icon_y, &icon_buff, &dp_buff);
-        if (ret)
-          goto err_pic_merge;
-
-        btn++;
-        icon_y += dp_buff.yres * 3 / 10;
-      }
-
-      /*
-       * free buff.
-       */
-      free_disp_buff_for_icon(&icon_buff);
-      free_disp_buff_for_icon(&origin_icon_buff);
+    /*
+     * display each button.
+     */
+    while (btn->pic.pic_name) {
+      setup_button_pic(btn, icon_x, icon_y, icon_width, icon_height, NULL);
+      btn->on_draw(btn, 0, NULL);
+      btn++;
+      icon_y += dp_buff.yres * 3 / 10;
     }
 
     vd_mem->pic_status = PS_GENERATED;
@@ -125,14 +260,10 @@ static int show_main_page(button *btn) {
 
   return 0;
 
-err_pic_merge:
-err_pic_zoom:
-  free_disp_buff_for_icon(&origin_icon_buff);
-err_get_disp_buff_for_icon:
-  free_disp_buff_for_icon(&icon_buff);
-err_malloc:
 err_get_disp_buff:
+err_get_display_ops_from_name:
 err_get_video_mem:
+  printf("err\n");
   return -1;
 }
 
@@ -142,6 +273,7 @@ err_get_video_mem:
 int main_page_run(void *params) {
   input_event ievt;
   int ret;
+  button *btn;
 
   /*
    * display interface.
@@ -156,36 +288,33 @@ int main_page_run(void *params) {
    * input processing.
    */
   while (1) {
-    ret = get_input_event(&ievt);
+    ret = main_page_get_input_event(btn_layout, &ievt);
     if (ret)
       continue;
 
     /*
-     * save, start, restore page.
+     * if input release.
      */
-    switch (ievt) {
-
-    case "browse":
-      store_page();
-      page("browse")->run(NULL);
-      restore_page();
-      break;
-
-    case "auto":
-      store_page();
-      page("auto")->run(NULL);
-      restore_page();
-      break;
-
-    case "setting":
-      store_page();
-      page("setting")->run(NULL);
-      restore_page();
-      break;
-
-    default:
-      break;
+    if (ievt.pressure == 0) {
+      btn = btn_layout;
+      while (btn->pic.pic_name) {
+        if (btn->status == BUTTON_PRESSED) {
+          btn->status = BUTTON_RELEASE;
+          release_button(btn);
+        }
+        btn++;
+      }
+      continue;
     }
+
+    /*
+     * execute button function.
+     */
+    btn = from_input_event_get_btn(btn_layout, &ievt);
+    if (!btn)
+      continue;
+
+    btn->on_pressed(NULL, NULL);
   }
 
   return 0;

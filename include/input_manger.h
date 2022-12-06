@@ -1,13 +1,14 @@
 #ifndef _INPUT_MANGER_H
 #define _INPUT_MANGER_H
 
-
 #ifndef NULL
 #define NULL (void *)0
 #endif
 
 #define INPUT_TYPE_TOUCH 0
 #define INPUT_TYPE_NET 1
+
+#define INPUT_RELEASE 0
 
 #include <sys/time.h>
 
@@ -27,7 +28,6 @@ typedef struct input_device {
   void (*device_exit)(void);
   struct input_device *next;
 } input_device;
-
 
 void register_input_device(input_device *idev);
 int select_input_device(char *name);

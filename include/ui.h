@@ -10,6 +10,9 @@
 #define BUTTON_PERCENT_COLOR 0x0000FF
 #define BUTTON_TEXT_COLOR 0x000000
 
+#define BUTTON_PRESSED 1
+#define BUTTON_RELEASE 0
+
 typedef struct pic_layout {
   region rgn;
   char *pic_name;
@@ -20,17 +23,21 @@ typedef struct button {
   char status;
   int font_size;
   pic_layout pic;
-  void (*on_draw)(struct button *btn, disp_ops *dp_ops, unsigned int color);
-  void (*on_pressed)(struct button *btn, disp_ops *dp_ops, input_event *ievt);
+  int (*on_draw)(struct button *btn, unsigned int color, char *pic_name);
+  int (*on_pressed)(struct button *btn, input_event *ievt);
 } button;
 
-typedef void (*on_draw)(button *btn, disp_ops *dp_ops, unsigned int color);
-typedef void (*on_pressed)(button *btn, disp_ops *dp_ops, input_event *ievt);
+typedef int (*on_draw)(button *btn, unsigned int color, char *pic_name);
+typedef int (*on_pressed)(button *btn, input_event *ievt);
 
-void default_on_draw(button *btn, disp_ops *dp_ops, unsigned int color);
-void default_on_pressed(button *btn, disp_ops *dp_ops, input_event *ievt);
+int default_on_draw(button *btn, unsigned int color, char *pic_name);
+int default_on_pressed(button *btn, input_event *ievt);
+void setup_button_pic(button *btn, unsigned int x, unsigned int y,
+                      unsigned int width, unsigned int height, char *str);
 int init_button(button *btn, char *name, pic_layout *pic, on_draw draw,
                 on_pressed pred);
+int get_button_rgn_data(button *btn, unsigned int *x, unsigned int *y,
+                        unsigned int *width, unsigned int *height);
 
 #if 0
 int init_button(button *btn, char *name, region *rgn, on_draw draw,

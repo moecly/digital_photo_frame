@@ -1,5 +1,6 @@
 #include "font_manger.h"
 #include "input_manger.h"
+#include <config.h>
 #include <disp_manger.h>
 #include <render.h>
 #include <stdio.h>
@@ -7,14 +8,20 @@
 
 /*
  * button default draw.
+ * picture priority.
+ * if you don't need a picture, set pic_name = NULL.
  */
-void default_on_draw(button *btn, disp_ops *dp_ops, unsigned int color) {
+int default_on_draw(button *btn, unsigned int color, char *pic_name) {
   disp_buff buff;
+  disp_ops *dp_ops = get_display_ops_from_name(LCD_NAME);
   int ret;
+
+  if (!dp_ops)
+    goto err_get_display_ops_from_name;
 
   ret = get_display_buffer(dp_ops, &buff);
   if (ret)
-    return;
+    goto err_get_display_buffer;
 
   /*
    * draw color.
@@ -31,19 +38,39 @@ void default_on_draw(button *btn, disp_ops *dp_ops, unsigned int color) {
    * flush to lcd/web.
    */
   flush_display_region(&btn->pic.rgn, dp_ops, &buff);
+
+  return 0;
+
+err_get_display_buffer:
+err_get_display_ops_from_name:
+  return -1;
+}
+
+/*
+ * set button pic.
+ */
+void setup_button_pic(button *btn, unsigned int x, unsigned int y,
+                      unsigned int width, unsigned int height, char *str) {
+  btn->pic.rgn.left_up_x = x;
+  btn->pic.rgn.left_up_y = y;
+  btn->pic.rgn.width = width;
+  btn->pic.rgn.height = height;
+  if (str)
+    btn->pic.pic_name = str;
 }
 
 /*
  * default pressed function.
  */
-void default_on_pressed(button *btn, disp_ops *dp_ops, input_event *ievt) {
+int default_on_pressed(button *btn, input_event *ievt) {
   unsigned int color;
   disp_buff buff;
+  disp_ops *dp_ops = get_display_ops_from_name(LCD_NAME);
   int ret;
 
   ret = get_display_buffer(dp_ops, &buff);
   if (ret)
-    return;
+    goto err_get_display_buffer;
 
   btn->status = !btn->status;
   if (btn->status)
@@ -51,7 +78,28 @@ void default_on_pressed(button *btn, disp_ops *dp_ops, input_event *ievt) {
   else
     color = BUTTON_DEFAULT_COLOR;
 
-  default_on_draw(btn, dp_ops, color);
+  default_on_draw(btn, color, NULL);
+
+  return 0;
+
+err_get_display_buffer:
+  return -1;
+}
+
+/*
+ * get button rgn data.
+ */
+int get_button_rgn_data(button *btn, unsigned int *x, unsigned int *y,
+                        unsigned int *width, unsigned int *height) {
+  if (x)
+    *x = btn->pic.rgn.left_up_x;
+  if (y)
+    *y = btn->pic.rgn.left_up_y;
+  if (width)
+    *width = btn->pic.rgn.width;
+  if (height)
+    *height = btn->pic.rgn.height;
+  return 0;
 }
 
 /*

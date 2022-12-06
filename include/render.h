@@ -2,6 +2,7 @@
 #define _RENDER_H
 
 #include <pic_operation.h>
+#include <ui.h>
 
 #if 0
 int put_pixel(int x, int y, unsigned int color, disp_buff *dp_buff);
@@ -22,5 +23,8 @@ void set_disp_buff_bpp(disp_buff *dp_buff, unsigned int bpp);
 void setup_disp_buff(disp_buff *dp_buff, unsigned int xres, unsigned int yres,
                      int bpp, unsigned char *buff);
 void free_disp_buff_for_icon(disp_buff *dp_buff);
+int release_button(button *btn);
+int press_button(button *btn);
+int invert_button(button *btn);
 
 #endif // !_RENDER_H

@@ -19,7 +19,9 @@ typedef struct region_cartesian {
   int height;
 } region_cartesian;
 
-#define for_each_node(root, node)                                              \
+#define for_each_linked_node(root, node)                                              \
   for (node = root; node != NULL; node = node->next)
+
+#define for_each_array_node(root, node) for (node = root; node != NULL; node++)
 
 #endif // !_COMMON_H

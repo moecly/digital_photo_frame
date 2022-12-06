@@ -1,6 +1,7 @@
 #include "common.h"
 #include "font_manger.h"
 #include "input_manger.h"
+#include <config.h>
 #include <disp_manger.h>
 #include <jpeglib.h>
 #include <setjmp.h>
@@ -39,7 +40,7 @@ int add_disp_queue(disp_ops *dp_ops) {
 int flush_video_mem_to_dev(video_mem *vd_mem) {
   int ret = 1;
   disp_ops *dp_ops;
-  for_each_node(dsp_ops, dp_ops) {
+  for_each_linked_node(dsp_ops, dp_ops) {
     ret = flush_one_video_mem_to_dev(dp_ops, vd_mem);
     if (ret)
       return -1;
@@ -109,14 +110,30 @@ void free_video_mem(void) {
 /*
  * alloc video mem.
  */
-int alloc_video_mem(int num, disp_buff *dp_buff) {
+int alloc_video_mem(int num) {
   int i;
-  unsigned int bpp = dp_buff->bpp;
-  unsigned int width = dp_buff->xres;
-  unsigned int height = dp_buff->yres;
-  unsigned int line_byte = dp_buff->line_byte;
-  unsigned int vm_size = dp_buff->total_size;
+  int ret;
+  disp_ops *dp_ops = get_display_ops_from_name(LCD_NAME);
+  disp_buff dp_buff;
+  unsigned int bpp;
+  unsigned int width;
+  unsigned int height;
+  unsigned int line_byte;
+  unsigned int vm_size;
   video_mem *tmp_video;
+
+  if (!dp_ops)
+    goto err_get_display_ops_from_name;
+
+  ret = get_display_buffer(dp_ops, &dp_buff);
+  if (ret)
+    goto err_get_display_buffer;
+
+  bpp = dp_buff.bpp;
+  width = dp_buff.xres;
+  height = dp_buff.yres;
+  line_byte = dp_buff.line_byte;
+  vm_size = dp_buff.total_size;
 
   tmp_video = malloc(sizeof(video_mem));
   if (!tmp_video)
@@ -136,7 +153,7 @@ int alloc_video_mem(int num, disp_buff *dp_buff) {
   /*
    * set buff.
    */
-  tmp_video->disp_buff.buff = dp_buff->buff;
+  tmp_video->disp_buff.buff = dp_buff.buff;
   tmp_video->disp_buff.bpp = bpp;
   tmp_video->disp_buff.xres = width;
   tmp_video->disp_buff.yres = height;
@@ -175,6 +192,8 @@ int alloc_video_mem(int num, disp_buff *dp_buff) {
 
 err_tmp_video:
   free_video_mem();
+err_get_display_ops_from_name:
+err_get_display_buffer:
   return -1;
 }
 

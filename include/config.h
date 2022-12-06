@@ -5,6 +5,7 @@
 #define CFG_FILE "/etc/test_gui/gui.conf"
 #define FB_DEV_NAME "/dev/fb0"
 #define ICON_PATH "/etc/digital/icons"
+#define LCD_NAME "lcd"
 
 #ifndef NULL
 #define NULL (void *)0

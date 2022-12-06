@@ -14,9 +14,19 @@ render.o: render.c \
  /linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include/bits/types/struct_timespec.h \
  /linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include/bits/stat.h \
  /linux/project/digital_photo_frame/include/file.h \
- /linux/project/digital_photo_frame/include/common.h \
+ /linux/project/digital_photo_frame/include/ui.h \
  /linux/project/digital_photo_frame/include/disp_manger.h \
  /linux/project/digital_photo_frame/include/font_manger.h \
+ /linux/project/digital_photo_frame/include/common.h \
+ /linux/project/digital_photo_frame/include/input_manger.h \
+ /linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include/sys/time.h \
+ /linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include/bits/types/time_t.h \
+ /linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include/bits/types/struct_timeval.h \
+ /linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include/sys/select.h \
+ /linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include/bits/select.h \
+ /linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include/bits/sigset.h \
+ /linux/project/digital_photo_frame/include/config.h \
+ /linux/project/digital_photo_frame/include/disp_manger.h \
  /linux/project/digital_photo_frame/include/render.h \
  /linux/project/digital_photo_frame/include/pic_operation.h \
  /linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include/stdio.h \

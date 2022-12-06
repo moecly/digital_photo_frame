@@ -1,6 +1,8 @@
 #include "fcntl.h"
 #include "file.h"
+#include "ui.h"
 #include <common.h>
+#include <config.h>
 #include <disp_manger.h>
 #include <render.h>
 #include <stdio.h>
@@ -136,7 +138,7 @@ int draw_line(int x_start, int x_end, int y, unsigned char *rgb_color_array) {
   /*
    * each every node.
    */
-  for_each_node(dp_ops_queue, dp_ops) {
+  for_each_linked_node(dp_ops_queue, dp_ops) {
     ret = get_display_buffer(dp_ops, &dp_buff);
     if (ret)
       return -1;
@@ -172,7 +174,7 @@ int clean_screen(unsigned int color) {
   disp_ops *dp_ops;
   disp_buff dp_buff;
 
-  for_each_node(dp_ops_queue, dp_ops) {
+  for_each_linked_node(dp_ops_queue, dp_ops) {
     ret = get_display_buffer(dp_ops, &dp_buff);
     if (ret)
       return -1;
@@ -183,6 +185,72 @@ int clean_screen(unsigned int color) {
     draw_region_from_ops(rgn, color, dp_ops);
   }
 
+  return 0;
+}
+
+/*
+ * invert button.
+ */
+int invert_button(button *btn) {
+  disp_ops *dp_ops = get_display_ops_from_name(LCD_NAME);
+  disp_buff dp_buff;
+  unsigned char *buff;
+  int ret;
+  unsigned int i;
+  unsigned int x, y;
+  unsigned int btn_x, btn_y;
+  unsigned int btn_width, btn_height;
+
+  if (!dp_ops)
+    goto err_get_display_ops_from_name;
+
+  /*
+   * get button data.
+   */
+  ret = get_display_buffer(dp_ops, &dp_buff);
+  if (ret)
+    goto err_get_display_buffer;
+
+  get_button_rgn_data(btn, &btn_x, &btn_y, &btn_width, &btn_height);
+  buff = dp_buff.buff;
+  buff += btn_y * dp_buff.line_byte + btn_x;
+
+  /*
+   * invert buffer.
+   */
+  for (y = btn_y; y < btn_y + btn_height; y++) {
+    for (x = btn_x, i = 0; x < btn_x + btn_width; x++, i++) {
+      buff[i] = ~buff[i];
+    }
+    buff += dp_buff.line_byte;
+  }
+
+  return 0;
+
+err_get_display_buffer:
+err_get_display_ops_from_name:
+  return -1;
+}
+
+/*
+ * press button.
+ */
+int press_button(button *btn) {
+  if (btn->status != BUTTON_PRESSED) {
+    btn->status = BUTTON_PRESSED;
+    invert_button(btn);
+  }
+  return 0;
+}
+
+/*
+ * release button.
+ */
+int release_button(button *btn) {
+  if (btn->status != BUTTON_RELEASE) {
+    btn->status = BUTTON_RELEASE;
+    invert_button(btn);
+  }
   return 0;
 }
 
@@ -202,7 +270,7 @@ void draw_from_bit_map(font_bit_map fb_map, unsigned int color) {
   int x_max = fb_map.region.width;
   int y_max = fb_map.region.height;
 
-  for_each_node(dp_ops_queue, dp_ops) {
+  for_each_linked_node(dp_ops_queue, dp_ops) {
     ret = get_display_buffer(dp_ops, &dp_buff);
     if (ret)
       return;
@@ -293,7 +361,7 @@ void draw_region(region reg, unsigned int color) {
   int height = reg.height;
   int i, j;
 
-  for_each_node(dp_ops_queue, dp_ops) {
+  for_each_linked_node(dp_ops_queue, dp_ops) {
     ret = get_display_buffer(dp_ops, &dp_buff);
     if (ret)
       return;

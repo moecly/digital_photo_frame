@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <stdio.h>
+
 /*
  * zoom picture.
  */
@@ -21,18 +23,16 @@ int pic_zoom(disp_buff *origin_desc, disp_buff *zoom_desc) {
   if (origin_desc->bpp != zoom_desc->bpp)
     goto err_bpp;
 
-  for (x = 0; x < dst_width; x++) {
+  for (x = 0; x < dst_width; x++)
     srcx_table[x] = (x * origin_desc->xres / zoom_desc->xres);
-  }
 
   for (y = 0; y < zoom_desc->yres; y++) {
     src_y = (y * origin_desc->yres / zoom_desc->yres);
     puc_src = origin_desc->buff + src_y * origin_desc->line_byte;
     puc_dest = zoom_desc->buff + y * zoom_desc->line_byte;
 
-    for (x = 0; x < dst_width; x++) {
+    for (x = 0; x < dst_width; x++)
       memcpy(puc_dest + x * bytes, puc_src + srcx_table[x] * bytes, bytes);
-    }
   }
 
   free(srcx_table);
@@ -41,5 +41,6 @@ int pic_zoom(disp_buff *origin_desc, disp_buff *zoom_desc) {
 
 err_bpp:
 err_table:
+  free(srcx_table);
   return -1;
 }

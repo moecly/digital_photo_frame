@@ -15,19 +15,16 @@
 #include <ui.h>
 #include <unistd.h>
 
+#if 1
+
 int main(int argc, char **argv) {
   int ret;
-  // int fd_bmp;
   disp_buff buff;
   disp_ops *fb_ops;
   region rgn;
-  // unsigned char *puc_bmp;
-  // struct stat bmp_stat;
   disp_buff pixel_data;
   disp_buff pixel_data_small;
-
   char icon_name[128];
-
   extern pic_file_parser bmp_parser;
 
   if (argc != 2) {
@@ -41,6 +38,11 @@ int main(int argc, char **argv) {
   display_system_register();
 
   fb_ops = get_display_ops_from_name("lcd");
+  if (!fb_ops) {
+    printf("get_display_ops_from_name err\n");
+    return -1;
+  }
+
   add_disp_queue(fb_ops);
   if (!fb_ops) {
     printf("get fb ops err\n");
@@ -65,8 +67,8 @@ int main(int argc, char **argv) {
   /*
    * init network input and lcd input.
    */
-  input_system_register();
-  input_device_init();
+  // input_system_register();
+  // input_device_init();
 
   /*
    * init font.
@@ -78,37 +80,12 @@ int main(int argc, char **argv) {
   /*
    * init page.
    */
+  alloc_video_mem(1);
   pages_system_register();
+  clean_screen(0xffffff);
+  page("main")->run(NULL);
 
-  /*
-   * open bmp.
-   */
-  // fd_bmp = open(argv[1], O_RDWR);
-  // if (fd_bmp < 0) {
-  //   printf("open fd_bmp err\n");
-  //   goto err_open;
-  // }
-
-  // fstat(fd_bmp, &bmp_stat);
-  // puc_bmp = (unsigned char *)mmap(
-  //     NULL, bmp_stat.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd_bmp, 0);
-  // if (puc_bmp == (unsigned char *)-1) {
-  //   printf("mmap err\n");
-  //   goto err_mmap;
-  // }
-
-  // ret = bmp_parser.is_support(puc_bmp);
-  // if (!ret) {
-  //   printf("pic parser is not support\n");
-  //   goto err_is_support;
-  // }
-
-  // pixel_data.bpp = buff.bpp;
-  // ret = bmp_parser.get_pixel_data(puc_bmp, &pixel_data);
-  // if (ret) {
-  //   printf("get pixel data err\n");
-  //   goto err_get_pixel_data;
-  // }
+#if 0
   snprintf(icon_name, 128, "%s/%s", ICON_PATH, argv[1]);
   icon_name[127] = '\0';
   set_disp_buff_bpp(&pixel_data, buff.bpp);
@@ -116,13 +93,9 @@ int main(int argc, char **argv) {
   if (ret)
     goto err_get_pixel_data;
 
-  pixel_data_small.bpp = buff.bpp;
-  pixel_data_small.xres = pixel_data.xres * 2;
-  pixel_data_small.yres = pixel_data.yres * 2;
-  pixel_data_small.pixel_width = pixel_data_small.bpp / 8;
-  pixel_data_small.line_byte = pixel_data_small.xres * pixel_data_small.bpp / 8;
-  pixel_data_small.buff =
-      malloc(pixel_data_small.line_byte * pixel_data_small.yres);
+  setup_disp_buff(&pixel_data_small, pixel_data.xres / 2, pixel_data.yres / 2,
+                  buff.bpp, NULL);
+  pixel_data_small.buff = malloc(pixel_data_small.total_size);
   if (!pixel_data_small.buff)
     goto err_malloc_small;
 
@@ -136,15 +109,15 @@ int main(int argc, char **argv) {
   flush_display_region(&rgn, fb_ops, &buff);
 
   bmp_parser.free_pixel_data(&pixel_data);
-  free(pixel_data_small.buff);
+  free_disp_buff_for_icon(&pixel_data_small);
+#endif
 
   return 0;
 
 err_malloc_small:
 err_get_pixel_data:
   bmp_parser.free_pixel_data(&pixel_data);
-  // err_is_support:
-  // err_mmap:
-  // err_open:
   return -1;
 }
+
+#endif
