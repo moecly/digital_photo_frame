@@ -1,0 +1,62 @@
+[
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/drive/Mass_production_tools_for_electronic_products/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include",
+      "-Wp,-MD,.disp_manger.o.d",
+      "-c",
+      "-o",
+      "disp_manger.o",
+      "disp_manger.c"
+    ],
+    "directory": "/linux/drive/Mass_production_tools_for_electronic_products/display",
+    "file": "/linux/drive/Mass_production_tools_for_electronic_products/display/disp_manger.c",
+    "output": "/linux/drive/Mass_production_tools_for_electronic_products/display/disp_manger.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/drive/Mass_production_tools_for_electronic_products/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include",
+      "-Wp,-MD,.framebuffer.o.d",
+      "-c",
+      "-o",
+      "framebuffer.o",
+      "framebuffer.c"
+    ],
+    "directory": "/linux/drive/Mass_production_tools_for_electronic_products/display",
+    "file": "/linux/drive/Mass_production_tools_for_electronic_products/display/framebuffer.c",
+    "output": "/linux/drive/Mass_production_tools_for_electronic_products/display/framebuffer.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/drive/Mass_production_tools_for_electronic_products/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include",
+      "-Wp,-MD,.disp_test.o.d",
+      "-c",
+      "-o",
+      "disp_test.o",
+      "disp_test.c"
+    ],
+    "directory": "/linux/drive/Mass_production_tools_for_electronic_products/unittest",
+    "file": "/linux/drive/Mass_production_tools_for_electronic_products/unittest/disp_test.c",
+    "output": "/linux/drive/Mass_production_tools_for_electronic_products/unittest/disp_test.o"
+  }
+]

@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "Mass_production_tools_for_electronic_products",
+			"path": "."
+		},
+		{
+			"name": "imx-linux4.9.88",
+			"path": "../../../bsp/imx-linux4.9.88"
+		}
+	],
+	"settings": {}
+}

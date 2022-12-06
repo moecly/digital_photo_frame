@@ -1,0 +1,342 @@
+[
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.disp_manger.o.d",
+      "-c",
+      "-o",
+      "disp_manger.o",
+      "disp_manger.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/display",
+    "file": "/linux/project/digital_photo_frame/display/disp_manger.c",
+    "output": "/linux/project/digital_photo_frame/display/disp_manger.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.framebuffer.o.d",
+      "-c",
+      "-o",
+      "framebuffer.o",
+      "framebuffer.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/display",
+    "file": "/linux/project/digital_photo_frame/display/framebuffer.c",
+    "output": "/linux/project/digital_photo_frame/display/framebuffer.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.disp_test.o.d",
+      "-c",
+      "-o",
+      "disp_test.o",
+      "disp_test.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/unittest",
+    "file": "/linux/project/digital_photo_frame/unittest/disp_test.c",
+    "output": "/linux/project/digital_photo_frame/unittest/disp_test.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.input_test.o.d",
+      "-c",
+      "-o",
+      "input_test.o",
+      "input_test.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/unittest",
+    "file": "/linux/project/digital_photo_frame/unittest/input_test.c",
+    "output": "/linux/project/digital_photo_frame/unittest/input_test.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.font_test.o.d",
+      "-c",
+      "-o",
+      "font_test.o",
+      "font_test.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/unittest",
+    "file": "/linux/project/digital_photo_frame/unittest/font_test.c",
+    "output": "/linux/project/digital_photo_frame/unittest/font_test.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.ui_test.o.d",
+      "-c",
+      "-o",
+      "ui_test.o",
+      "ui_test.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/unittest",
+    "file": "/linux/project/digital_photo_frame/unittest/ui_test.c",
+    "output": "/linux/project/digital_photo_frame/unittest/ui_test.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.page_test.o.d",
+      "-c",
+      "-o",
+      "page_test.o",
+      "page_test.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/unittest",
+    "file": "/linux/project/digital_photo_frame/unittest/page_test.c",
+    "output": "/linux/project/digital_photo_frame/unittest/page_test.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.main.o.d",
+      "-c",
+      "-o",
+      "main.o",
+      "main.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/business",
+    "file": "/linux/project/digital_photo_frame/business/main.c",
+    "output": "/linux/project/digital_photo_frame/business/main.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.touchscreen.o.d",
+      "-c",
+      "-o",
+      "touchscreen.o",
+      "touchscreen.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/input",
+    "file": "/linux/project/digital_photo_frame/input/touchscreen.c",
+    "output": "/linux/project/digital_photo_frame/input/touchscreen.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.netinput.o.d",
+      "-c",
+      "-o",
+      "netinput.o",
+      "netinput.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/input",
+    "file": "/linux/project/digital_photo_frame/input/netinput.c",
+    "output": "/linux/project/digital_photo_frame/input/netinput.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.input_manger.o.d",
+      "-c",
+      "-o",
+      "input_manger.o",
+      "input_manger.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/input",
+    "file": "/linux/project/digital_photo_frame/input/input_manger.c",
+    "output": "/linux/project/digital_photo_frame/input/input_manger.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.config.o.d",
+      "-c",
+      "-o",
+      "config.o",
+      "config.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/config",
+    "file": "/linux/project/digital_photo_frame/config/config.c",
+    "output": "/linux/project/digital_photo_frame/config/config.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.font_manger.o.d",
+      "-c",
+      "-o",
+      "font_manger.o",
+      "font_manger.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/font",
+    "file": "/linux/project/digital_photo_frame/font/font_manger.c",
+    "output": "/linux/project/digital_photo_frame/font/font_manger.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.freetype.o.d",
+      "-c",
+      "-o",
+      "freetype.o",
+      "freetype.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/font",
+    "file": "/linux/project/digital_photo_frame/font/freetype.c",
+    "output": "/linux/project/digital_photo_frame/font/freetype.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.page_manger.o.d",
+      "-c",
+      "-o",
+      "page_manger.o",
+      "page_manger.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/page",
+    "file": "/linux/project/digital_photo_frame/page/page_manger.c",
+    "output": "/linux/project/digital_photo_frame/page/page_manger.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.main_page.o.d",
+      "-c",
+      "-o",
+      "main_page.o",
+      "main_page.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/page",
+    "file": "/linux/project/digital_photo_frame/page/main_page.c",
+    "output": "/linux/project/digital_photo_frame/page/main_page.o"
+  },
+  {
+    "arguments": [
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc",
+      "-Wall",
+      "-O2",
+      "-g",
+      "-I",
+      "/linux/project/digital_photo_frame/include",
+      "-I",
+      "/linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/./arm-linux-gnueabihf/libc/usr/include/",
+      "-Wp,-MD,.button.o.d",
+      "-c",
+      "-o",
+      "button.o",
+      "button.c"
+    ],
+    "directory": "/linux/project/digital_photo_frame/ui",
+    "file": "/linux/project/digital_photo_frame/ui/button.c",
+    "output": "/linux/project/digital_photo_frame/ui/button.o"
+  }
+]
