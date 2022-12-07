@@ -165,3 +165,27 @@ int get_input_event(input_event *ievt) {
 
   return res;
 }
+
+/*
+ * get lcd input event.
+ */
+int lcd_page_get_input_event(input_event *ievt) {
+  int ret;
+
+  /*
+   * filter event.
+   */
+  ret = get_input_event(ievt);
+
+  if (ret)
+    goto err_get_input_event;
+
+  if (ievt->type != INPUT_TYPE_TOUCH)
+    goto err_input_event;
+
+  return 0;
+
+err_input_event:
+err_get_input_event:
+  return -1;
+}

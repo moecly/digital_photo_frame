@@ -26,11 +26,8 @@ bmp_test.o: bmp_test.c \
  /linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include/bits/sigset.h \
  /linux/project/digital_photo_frame/include/page_manger.h \
  /linux/project/digital_photo_frame/include/ui.h \
- /linux/project/digital_photo_frame/include/disp_manger.h \
- /linux/project/digital_photo_frame/include/input_manger.h \
  /linux/project/digital_photo_frame/include/pic_operation.h \
  /linux/project/digital_photo_frame/include/render.h \
- /linux/project/digital_photo_frame/include/ui.h \
  /linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include/stdio.h \
  /linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/libc/usr/include/bits/libc-header-start.h \
  /linux/bsp/gcc-linaro-7.5.0-2019.12-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/7.5.0/include/stddef.h \

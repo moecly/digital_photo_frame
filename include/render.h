@@ -25,6 +25,27 @@ void setup_disp_buff(disp_buff *dp_buff, unsigned int xres, unsigned int yres,
 void free_disp_buff_for_icon(disp_buff *dp_buff);
 int release_button(button *btn);
 int press_button(button *btn);
+int clean_screen_from_ops(unsigned int color, disp_ops *dp_ops);
+int clean_screen_from_buff(unsigned int color, disp_buff *dp_buff);
+int icon_on_draw(struct button *btn, unsigned int color, char *pic_name,
+                 video_mem *vd_mem);
+int clean_screen_from_vd(unsigned int color, video_mem *vd_mem);
+int merger_string_to_center_of_rectangle_in_video_mem(
+    int iTopLeftX, int iTopLeftY, int iBotRightX, int iBotRightY,
+    char *pucTextString, video_mem *ptVideoMem);
+
+void draw_from_bit_map_from_buffer(font_bit_map fb_map, unsigned int color,
+                                   disp_buff *dp_buff);
+
+int draw_text_in_vd_mem(char *str, region *rgn, unsigned int color,
+                        video_mem *vd_mem);
+
+int show_pixel(unsigned int x, unsigned int y, unsigned int color,
+                   disp_buff *dp_buff);
 int invert_button(button *btn);
+void clean_button_invert(button *btn);
+int clear_rectangle_from_vd(video_mem *dv_mem, unsigned int x, unsigned int y,
+                            unsigned int width, unsigned int height,
+                            unsigned int color);
 
 #endif // !_RENDER_H

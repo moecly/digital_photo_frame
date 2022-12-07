@@ -41,7 +41,7 @@ int flush_video_mem_to_dev(video_mem *vd_mem) {
   int ret = 1;
   disp_ops *dp_ops;
   for_each_linked_node(dsp_ops, dp_ops) {
-    ret = flush_one_video_mem_to_dev(dp_ops, vd_mem);
+    ret = flush_one_video_mem_to_dev_from_ops(dp_ops, vd_mem);
     if (ret)
       return -1;
   }
@@ -51,7 +51,7 @@ int flush_video_mem_to_dev(video_mem *vd_mem) {
 /*
  * flush video mem to dev.
  */
-int flush_one_video_mem_to_dev(disp_ops *dp_ops, video_mem *vd_mem) {
+int flush_one_video_mem_to_dev_from_ops(disp_ops *dp_ops, video_mem *vd_mem) {
   return dp_ops->show_page(&vd_mem->disp_buff);
 }
 
@@ -119,6 +119,7 @@ int alloc_video_mem(int num) {
   unsigned int width;
   unsigned int height;
   unsigned int line_byte;
+  unsigned int pixel_width;
   unsigned int vm_size;
   video_mem *tmp_video;
 
@@ -133,6 +134,7 @@ int alloc_video_mem(int num) {
   width = dp_buff.xres;
   height = dp_buff.yres;
   line_byte = dp_buff.line_byte;
+  pixel_width = dp_buff.bpp / 8;
   vm_size = dp_buff.total_size;
 
   tmp_video = malloc(sizeof(video_mem));
@@ -158,6 +160,8 @@ int alloc_video_mem(int num) {
   tmp_video->disp_buff.xres = width;
   tmp_video->disp_buff.yres = height;
   tmp_video->disp_buff.line_byte = line_byte;
+  tmp_video->disp_buff.pixel_width = pixel_width;
+  tmp_video->disp_buff.total_size = line_byte * height;
 
   if (num != 0)
     tmp_video->mem_status = VMS_USED_FOR_CUR;
@@ -186,6 +190,8 @@ int alloc_video_mem(int num) {
     tmp_video->disp_buff.xres = width;
     tmp_video->disp_buff.yres = height;
     tmp_video->disp_buff.line_byte = line_byte;
+    tmp_video->disp_buff.pixel_width = pixel_width;
+    tmp_video->disp_buff.total_size = line_byte * height;
   }
 
   return 0;

@@ -1,7 +1,9 @@
+#include "ui.h"
 #include <page_manger.h>
 #include <string.h>
 
 extern void main_page_register(void);
+extern void browse_page_register(void);
 
 page_action *page_atn;
 
@@ -39,4 +41,20 @@ page_action *page(char *name) {
 /*
  * display page.
  */
-void pages_system_register(void) { main_page_register(); }
+void pages_system_register(void) {
+  main_page_register();
+  browse_page_register();
+}
+
+/*
+ * from input event get file or dir.
+ */
+button *from_input_event_get_button_from_page_layout(page_layout *layout,
+                                                     input_event *ievt) {
+  return from_input_event_get_btn(layout->atLayout, ievt);
+  // button *btn = layout->atLayout;
+  // while (btn->pic.rgn.width) {
+  //   printf("test\n");
+  //   btn++;
+  // }
+}

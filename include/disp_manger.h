@@ -51,7 +51,7 @@ typedef struct display_operations {
 disp_ops *get_disp_queue(void);
 int flush_video_mem_to_dev(video_mem *vd_mem);
 int add_disp_queue(disp_ops *dp_ops);
-int flush_one_video_mem_to_dev(disp_ops *dp_ops, video_mem *vd_mem);
+int flush_one_video_mem_to_dev_from_ops(disp_ops *dp_ops, video_mem *vd_mem);
 void register_display(disp_ops *dops);
 void display_system_register(void);
 void free_video_mem(void);

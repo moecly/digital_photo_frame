@@ -24,6 +24,7 @@ int main(int argc, char **argv) {
   region rgn;
   disp_buff pixel_data;
   disp_buff pixel_data_small;
+  region_cartesian rgn_cart;
   char icon_name[128];
   extern pic_file_parser bmp_parser;
 
@@ -61,14 +62,11 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  printf("fb_ops name %s\n", fb_ops->name);
-  printf("buff val %d\n", buff.bpp);
-
   /*
    * init network input and lcd input.
    */
-  // input_system_register();
-  // input_device_init();
+  input_system_register();
+  input_device_init();
 
   /*
    * init font.
@@ -80,9 +78,8 @@ int main(int argc, char **argv) {
   /*
    * init page.
    */
-  alloc_video_mem(1);
+  alloc_video_mem(5);
   pages_system_register();
-  clean_screen(0xffffff);
   page("main")->run(NULL);
 
 #if 0

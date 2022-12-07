@@ -75,20 +75,6 @@ static int lcd_get_buffer(disp_buff *dp_buff) {
 }
 
 /*
- * lcd show page.
- */
-static int lcd_show_page(disp_buff *dp_buff) {
-  memcpy(fb_base, dp_buff, dp_buff->total_size);
-  return 0;
-}
-
-/*
- * no do something.
- */
-// TODO
-static int lcd_flush_region(region *rgn, disp_buff *buffer) { return 0; }
-
-/*
  * show pixel.
  */
 static int lcd_show_pixel(unsigned int x, unsigned int y, unsigned int color) {
@@ -127,6 +113,20 @@ static int lcd_show_pixel(unsigned int x, unsigned int y, unsigned int color) {
 
   return 0;
 }
+
+/*
+ * lcd show page.
+ */
+static int lcd_show_page(disp_buff *dp_buff) {
+  memcpy(fb_base, dp_buff->buff, dp_buff->total_size);
+  return 0;
+}
+
+/*
+ * no do something.
+ */
+// TODO
+static int lcd_flush_region(region *rgn, disp_buff *buffer) { return 0; }
 
 static disp_ops lcd_disp_ops = {
     .name = "lcd",

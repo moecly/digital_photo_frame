@@ -35,5 +35,6 @@ void input_system_register(void);
 int def_input_dev_init(void);
 int get_input_event(input_event *ievt);
 void input_device_init(void);
+int lcd_page_get_input_event(input_event *ievt);
 
 #endif
