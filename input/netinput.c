@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
   int ret;
 
   net_dev.device_init();
-  while (1) {
+  for (;;) {
     ret = net_dev.get_input_event(&ievt);
     if (ret) {
       printf("get input event err\n");

@@ -44,3 +44,33 @@ err_table:
   free(srcx_table);
   return -1;
 }
+
+/*
+ * pic merge region.
+ */
+int pic_merge_region(int iStartXofNewPic, int iStartYofNewPic,
+                     int iStartXofOldPic, int iStartYofOldPic, int iWidth,
+                     int iHeight, disp_buff *ptNewPic, disp_buff *ptOldPic) {
+  int i;
+  unsigned char *pucSrc;
+  unsigned char *pucDst;
+  int iLineBytesCpy = iWidth * ptNewPic->bpp / 8;
+
+  if ((iStartXofNewPic < 0 || iStartXofNewPic >= ptNewPic->xres) ||
+      (iStartYofNewPic < 0 || iStartYofNewPic >= ptNewPic->yres) ||
+      (iStartXofOldPic < 0 || iStartXofOldPic >= ptOldPic->xres) ||
+      (iStartYofOldPic < 0 || iStartYofOldPic >= ptOldPic->yres)) {
+    return -1;
+  }
+
+  pucSrc = ptNewPic->buff + iStartYofNewPic * ptNewPic->line_byte +
+           iStartXofNewPic * ptNewPic->bpp / 8;
+  pucDst = ptOldPic->buff + iStartYofOldPic * ptOldPic->line_byte +
+           iStartXofOldPic * ptOldPic->bpp / 8;
+  for (i = 0; i < iHeight; i++) {
+    memcpy(pucDst, pucSrc, iLineBytesCpy);
+    pucSrc += ptNewPic->line_byte;
+    pucDst += ptOldPic->line_byte;
+  }
+  return 0;
+}

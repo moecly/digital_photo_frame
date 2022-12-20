@@ -17,6 +17,8 @@ static int browse_mode_on_pressed(struct button *btn, input_event *ievt);
 static int continue_mode_on_pressed(struct button *btn, input_event *ievt);
 static int setting_on_pressed(struct button *btn, input_event *ievt);
 
+static page_params page_pms;
+
 /*
  * button config.
  */
@@ -124,15 +126,18 @@ err_get_disp_buff_for_icon:
 #endif
 
 static int browse_mode_on_pressed(struct button *btn, input_event *ievt) {
-  return jump_page_on_pressed(btn, ievt, "browse", NULL);
+  return invert_jump_page_on_pressed(btn, ievt, "browse", &page_pms,
+                                     (void *)show_main_page, btn_layout);
 }
 
 static int continue_mode_on_pressed(struct button *btn, input_event *ievt) {
-  return jump_page_on_pressed(btn, ievt, "browse", NULL);
+  return invert_jump_page_on_pressed(btn, ievt, "auto", &page_pms,
+                                     (void *)show_main_page, btn_layout);
 }
 
 static int setting_on_pressed(struct button *btn, input_event *ievt) {
-  return jump_page_on_pressed(btn, ievt, "browse", NULL);
+  return invert_jump_page_on_pressed(btn, ievt, "setting", &page_pms,
+                                     (void *)show_main_page, btn_layout);
 }
 
 /*
@@ -218,11 +223,11 @@ static int show_main_page(button *btn) {
   /*
    * draw.
    */
-  clean_screen_from_vd(BACKGROUND, vd_mem);
   if (vd_mem->pic_status != PS_GENERATED) {
     /*
      * display each button.
      */
+    clean_screen_from_vd(BACKGROUND, vd_mem);
     if (btn[0].pic.rgn.left_up_x == 0)
       calc_main_page_layout(btn);
 
@@ -243,7 +248,6 @@ static int show_main_page(button *btn) {
   return 0;
 
 err_get_video_mem:
-  printf("err\n");
   return -1;
 }
 
@@ -255,6 +259,7 @@ int main_page_run(void *params) {
   int ret;
   button *btn;
 
+  page_pms.page_id = ID("main");
   /*
    * display interface.
    */
@@ -267,7 +272,7 @@ int main_page_run(void *params) {
   /*
    * input processing.
    */
-  while (1) {
+  for (;;) {
     ret = lcd_page_get_input_event(&ievt);
     if (ret)
       continue;

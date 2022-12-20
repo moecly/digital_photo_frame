@@ -20,16 +20,29 @@
 #define DIR_FILE_ALL_WIDTH DIR_FILE_NAME_WIDTH
 #define DIR_FILE_ALL_HEIGHT DIR_FILE_ALL_WIDTH
 
+static int show_browse_page(button *btn);
+static int calc_browse_page_dir_and_files_layout(void);
+static int generate_dir_and_file_icons(page_layout *ptPageLayout);
+static int show_dir_and_file_icons(int iStartIndex, int iDirContentsNumber,
+                                   dir_content **aptDirContents,
+                                   video_mem *ptVideoMem);
+static button btn_layout[];
+static page_layout g_tBrowsePageDirAndFileLayout;
+static page_params page_pms;
 static int g_iDirFileNumPerCol, g_iDirFileNumPerRow;
 static disp_buff g_tDirClosedIconPixelDatas;
 static disp_buff g_tDirOpenedIconPixelDatas;
 static disp_buff g_tFileIconPixelDatas;
 static button *g_atDirAndFileLayout;
+static button *select_btn;
 static char *g_strDirClosedIconName = "fold_closed.bmp";
 static char *g_strDirOpenedIconName = "fold_opened.bmp";
 static char *g_strFileIconName = "file.bmp";
 
+static int is_exit = 0;
+static int is_use_select = 0;
 static int g_iStartIndex = 0;
+static int open_from_setting = 0;
 static dir_content *
     *g_aptDirContents; /* 数组:存有目录下"顶层子目录","文件"的名字 */
 static int g_iDirContentsNumber; /* g_aptDirContents数组有多少项 */
@@ -37,24 +50,135 @@ static int g_iDirContentsNumber; /* g_aptDirContents数组有多少项 */
 static char g_strCurDir[256] = DEFAULT_DIR;
 static char g_strSelectedDir[256] = DEFAULT_DIR;
 
+static void jump_to_up_dir(void) {
+  char *dir_path;
+
+  /*
+   * is root dir.
+   */
+  if (!strcmp("/", g_strCurDir))
+    goto done;
+
+  /*
+   * get new dir contents.
+   */
+  dir_path = strrchr(g_strCurDir, '/');
+  *dir_path = '\0';
+  free_dir_contents(g_aptDirContents, g_iDirContentsNumber);
+  get_dir_contents(g_strCurDir, &g_aptDirContents, &g_iDirContentsNumber);
+
+  /*
+   * refresh display.
+   */
+  show_browse_page(btn_layout);
+
+done:
+  return;
+}
+
+static void pre_page_func(void) {
+  video_mem *vd_mem = get_dev_video_mem();
+
+  if (!vd_mem)
+    goto err_get_dev_video_mem;
+
+  g_iStartIndex -= g_iDirFileNumPerCol * g_iDirFileNumPerRow;
+  if (g_iStartIndex >= 0) {
+    show_dir_and_file_icons(g_iStartIndex, g_iDirContentsNumber,
+                            g_aptDirContents, vd_mem);
+  } else {
+    g_iStartIndex += g_iDirFileNumPerCol * g_iDirFileNumPerRow;
+  }
+
+  put_video_mem(vd_mem);
+err_get_dev_video_mem:
+  return;
+}
+
+static void next_page_func(void) {
+  video_mem *vd_mem = get_dev_video_mem();
+
+  if (!vd_mem)
+    goto err_get_dev_video_mem;
+
+  g_iStartIndex += g_iDirFileNumPerCol * g_iDirFileNumPerRow;
+  if (g_iStartIndex < g_iDirContentsNumber) {
+    show_dir_and_file_icons(g_iStartIndex, g_iDirContentsNumber,
+                            g_aptDirContents, vd_mem);
+  } else {
+    g_iStartIndex -= g_iDirFileNumPerCol * g_iDirFileNumPerRow;
+  }
+
+  put_video_mem(vd_mem);
+err_get_dev_video_mem:
+  return;
+}
+
+/*
+ * select dir.
+ */
+static int select_dir_func(input_event *ievt) {
+  char dir_name[256];
+  char dir_path[256];
+  int index;
+
+  /*
+   * get open dir index.
+   */
+  index = from_input_event_get_button_index_from_page_layout(
+      &g_tBrowsePageDirAndFileLayout, ievt);
+  index /= 2;
+  index += g_iStartIndex;
+  strcpy(dir_name, g_aptDirContents[index]->str_name);
+
+  /*
+   * get and set select dir.
+   */
+  snprintf(dir_path, 256, "%s/%s", g_strCurDir, dir_name);
+  dir_path[255] = '\0';
+  strcpy(g_strSelectedDir, dir_path);
+
+  return 0;
+}
+
+static void set_exit(int val) { is_exit = val; }
+
 static int return_on_pressed(struct button *btn, input_event *ievt) {
-  return jump_page_on_pressed(btn, ievt, "main", NULL);
+  return on_pressed_func(btn, ievt, (void *)set_exit, (void *)1);
 }
 
 static int up_on_pressed(struct button *btn, input_event *ievt) {
-  return jump_page_on_pressed(btn, ievt, "main", NULL);
+  g_iStartIndex = 0;
+  is_use_select = 0;
+  release_button(select_btn);
+  on_pressed_func(btn, ievt, (void *)jump_to_up_dir, &page_pms);
+  calc_browse_page_dir_and_files_layout();
+  return 0;
 }
 
 static int select_on_pressed(struct button *btn, input_event *ievt) {
-  return jump_page_on_pressed(btn, ievt, "main", NULL);
+  if (ievt->pressure) {
+    if (btn->status == BUTTON_PRESSED) {
+      release_button(btn);
+      is_use_select = 0;
+    } else {
+      press_button(btn);
+      is_use_select = 1;
+    }
+  }
+  return 0;
 }
 
 static int pre_page_on_pressed(struct button *btn, input_event *ievt) {
-  return jump_page_on_pressed(btn, ievt, "main", NULL);
+  on_pressed_func(btn, ievt, (void *)pre_page_func, &page_pms);
+  calc_browse_page_dir_and_files_layout();
+  return 0;
 }
 
 static int next_page_on_pressed(struct button *btn, input_event *ievt) {
-  return jump_page_on_pressed(btn, ievt, "main", NULL);
+  on_pressed_func(btn, ievt, (void *)next_page_func, &page_pms);
+  calc_browse_page_dir_and_files_layout();
+  return 0;
 }
 
 static button btn_layout[] = {
@@ -116,10 +240,99 @@ static page_layout g_tBrowsePageDirAndFileLayout = {
     //.atLayout       = g_atDirAndFileLayout,
 };
 
-static page_layout g_tBrowsePageMenuIconsLayout = {
-    .iMaxTotalBytes = 0,
-    .atLayout = btn_layout,
-};
+// static page_layout g_tBrowsePageMenuIconsLayout = {
+//     .iMaxTotalBytes = 0,
+//     .atLayout = btn_layout,
+// };
+
+static int file_pressed(button *btn) {
+  if (btn->status != BUTTON_PRESSED) {
+    set_pic_disp_pic(&btn->pic, g_strDirOpenedIconName);
+    draw_pic(&btn->pic);
+    btn->status = BUTTON_PRESSED;
+  }
+  return 0;
+}
+
+static int file_release(button *btn) {
+  if (btn->status != BUTTON_RELEASE) {
+    set_pic_disp_pic(&btn->pic, g_strDirClosedIconName);
+    draw_pic(&btn->pic);
+    btn->status = BUTTON_RELEASE;
+  }
+  return 0;
+}
+
+/*
+ * open dir.
+ */
+static int open_dir(input_event *ievt) {
+  int index;
+  char dir_name[256];
+  char dir_path[256];
+
+  /*
+   * get open dir index.
+   */
+  index = from_input_event_get_button_index_from_page_layout(
+      &g_tBrowsePageDirAndFileLayout, ievt);
+  index /= 2;
+  index += g_iStartIndex;
+  strcpy(dir_name, g_aptDirContents[index]->str_name);
+
+  /*
+   * free cur dir contents.
+   */
+  free_dir_contents(g_aptDirContents, g_iDirContentsNumber);
+
+  /*
+   * get open dir contents from index.
+   */
+  snprintf(dir_path, 256, "%s/%s", g_strCurDir, dir_name);
+  dir_path[255] = '\0';
+  get_dir_contents(dir_path, &g_aptDirContents, &g_iDirContentsNumber);
+  strcpy(g_strCurDir, dir_path);
+
+  /*
+   * refresh display.
+   */
+  show_browse_page(btn_layout);
+
+  return 0;
+}
+
+/*
+ * dir button function.
+ */
+static int dir_button_func(button *btn, input_event *ievt) {
+  if (ievt->pressure == INPUT_RELEASE) {
+    file_release(btn);
+    if (is_use_select) {
+      select_dir_func(ievt);
+      release_button(select_btn);
+      is_use_select = 0;
+    } else {
+      open_dir(ievt);
+    }
+  } else {
+    file_pressed(btn);
+  }
+
+  return 0;
+}
+
+/*
+ * file button function.
+ */
+static int file_button_func(button *btn, input_event *ievt, int index) {
+  if (ievt->pressure == INPUT_RELEASE) {
+    snprintf(page_pms.str_cur_picture_file, 256, "%s/%s", g_strCurDir,
+             g_aptDirContents[index]->str_name);
+    page("manual")->run(&page_pms);
+    show_browse_page(btn_layout);
+  }
+  return 0;
+}
 
 /*
  * calc browse page menus layout.
@@ -127,21 +340,16 @@ static page_layout g_tBrowsePageMenuIconsLayout = {
 static int calc_browse_page_menus_layout(button *btn) {
   int iWidth;
   int iHeight;
-  int iXres, iYres, iBpp;
-  int iTmpTotalBytes;
-  region atLayout;
+  int iXres, iYres;
   int i;
   disp_ops *dp_ops = get_display_ops_from_name(LCD_NAME);
   disp_buff dp_buff;
 
   get_display_buffer(dp_ops, &dp_buff);
-  atLayout = btn->pic.rgn;
 
   iXres = dp_buff.xres;
   iYres = dp_buff.yres;
-  iBpp = dp_buff.bpp;
-  // GetDispResolution(&iXres, &iYres, &iBpp);
-  // ptPageLayout->iBpp = iBpp;
+  select_btn = &btn[2];
 
   if (iXres < iYres) {
     /*	 iXres/4
@@ -200,7 +408,7 @@ static int calc_browse_page_menus_layout(button *btn) {
      *	  ----------------------------------
      */
 
-    iHeight = iYres / 4;
+    iHeight = iYres / 5;
     iWidth = iHeight;
 
     /* return图标 */
@@ -228,6 +436,12 @@ static int calc_browse_page_menus_layout(button *btn) {
     btn[3].pic.rgn.height = iHeight - 1;
     btn[3].pic.rgn.left_up_x = 0;
     btn[3].pic.rgn.width = iWidth - 1;
+
+    btn[4].pic.rgn.left_up_y =
+        btn[3].pic.rgn.left_up_y + btn[3].pic.rgn.height + 1;
+    btn[4].pic.rgn.height = iHeight - 1;
+    btn[4].pic.rgn.left_up_x = 0;
+    btn[4].pic.rgn.width = iWidth - 1;
   }
 
   i = 0;
@@ -307,7 +521,7 @@ static int calc_browse_page_dir_and_files_layout(void) {
 
   /* 图标之间的间隔要大于10个象素 */
   iNumPerRow = (iBotRightX - iTopLeftX + 1) / iIconWidth;
-  while (1) {
+  for (;;) {
     iDeltaX = (iBotRightX - iTopLeftX + 1) - iIconWidth * iNumPerRow;
     if ((iDeltaX / (iNumPerRow + 1)) < 10)
       iNumPerRow--;
@@ -316,7 +530,7 @@ static int calc_browse_page_dir_and_files_layout(void) {
   }
 
   iNumPerCol = (iBotRightY - iTopLeftY + 1) / iIconHeight;
-  while (1) {
+  for (;;) {
     iDeltaY = (iBotRightY - iTopLeftY + 1) - iIconHeight * iNumPerCol;
     if ((iDeltaY / (iNumPerCol + 1)) < 10)
       iNumPerCol--;
@@ -371,6 +585,9 @@ static int calc_browse_page_dir_and_files_layout(void) {
       g_atDirAndFileLayout[k].pic.rgn.width = DIR_FILE_ICON_WIDTH - 1;
       g_atDirAndFileLayout[k].pic.rgn.left_up_y = iTopLeftY;
       g_atDirAndFileLayout[k].pic.rgn.height = DIR_FILE_ICON_HEIGHT - 1;
+      g_atDirAndFileLayout[k].pic.pic_name = "pic";
+      g_atDirAndFileLayout[k].on_draw = NULL;
+      g_atDirAndFileLayout[k].on_pressed = dir_button_func;
 
       /* 名字 */
       g_atDirAndFileLayout[k + 1].pic.rgn.left_up_x = iTopLeftX;
@@ -379,6 +596,9 @@ static int calc_browse_page_dir_and_files_layout(void) {
           g_atDirAndFileLayout[k].pic.rgn.left_up_y +
           g_atDirAndFileLayout[k].pic.rgn.height + 1;
       g_atDirAndFileLayout[k + 1].pic.rgn.height = DIR_FILE_NAME_HEIGHT - 1;
+      g_atDirAndFileLayout[k + 1].pic.pic_name = "name";
+      g_atDirAndFileLayout[k + 1].on_draw = NULL;
+      g_atDirAndFileLayout[k + 1].on_pressed = NULL;
 
       iTopLeftX += DIR_FILE_ALL_WIDTH + iDeltaX;
       k += 2;
@@ -486,6 +706,9 @@ static int generate_dir_and_file_icons(page_layout *ptPageLayout) {
   return 0;
 }
 
+/*
+ * show dir and file icons.
+ */
 static int show_dir_and_file_icons(int iStartIndex, int iDirContentsNumber,
                                    dir_content **aptDirContents,
                                    video_mem *ptVideoMem) {
@@ -552,11 +775,11 @@ static int show_browse_page(button *btn) {
   /*
    * draw.
    */
-  clean_screen_from_vd(BACKGROUND, vd_mem);
   if (vd_mem->pic_status != PS_GENERATED) {
     /*
      * display each button.
      */
+    clean_screen_from_vd(BACKGROUND, vd_mem);
     if (btn[0].pic.rgn.left_up_x == 0) {
       calc_browse_page_menus_layout(btn);
       calc_browse_page_dir_and_files_layout();
@@ -575,7 +798,7 @@ static int show_browse_page(button *btn) {
      */
     show_dir_and_file_icons(g_iStartIndex, g_iDirContentsNumber,
                             g_aptDirContents, vd_mem);
-    vd_mem->pic_status = PS_GENERATED;
+    // vd_mem->pic_status = PS_GENERATED;
   }
 
   /*
@@ -595,21 +818,53 @@ err_get_video_mem:
 }
 
 /*
- * dir or file button function.
+ * clean file icon.
  */
-static int dir_or_file_button_func(button *btn) {
-  printf("test\n");
+static int clean_file_icon(button *btn) {
+  while (btn->pic.pic_name) {
+    if (btn->status == BUTTON_PRESSED) {
+      file_release(btn);
+      btn->status = BUTTON_RELEASE;
+    }
+    btn++;
+  }
   return 0;
 }
 
 /*
- * main page.
+ * get select dir.
+ */
+static void get_select_dir(char *dir) { strcpy(dir, g_strSelectedDir); }
+
+/*
+ * get browse page config.
+ */
+int get_browse_page_cfg(page_cfg *page) {
+  get_select_dir(page->select_dir);
+  page->interval_second = get_interval_second();
+  return 0;
+}
+
+/*
+ * browse page.
  */
 int browse_page_run(void *params) {
   input_event ievt;
   int ret;
+  int index;
+  int dir_index;
   button *btn;
+  page_params *pms;
 
+  pms = (page_params *)params;
+  page_pms.page_id = ID("browse");
+  is_use_select = 0;
+  set_exit(0);
+  if (ID("setting") == pms->page_id) {
+    open_from_setting = 1;
+  } else {
+    open_from_setting = 0;
+  }
   /*
    * create prepare thread.
    */
@@ -625,11 +880,15 @@ int browse_page_run(void *params) {
    * display interface.
    */
   show_browse_page(btn_layout);
+  select_btn->status = BUTTON_RELEASE;
 
   /*
    * input processing.
    */
-  while (1) {
+  for (;;) {
+    if (is_exit)
+      goto done;
+
     ret = lcd_page_get_input_event(&ievt);
     if (ret)
       continue;
@@ -643,17 +902,35 @@ int browse_page_run(void *params) {
      * if isn't menu button.
      */
     if (!btn) {
-      clean_button_invert(btn_layout);
       /*
        * get file or dir.
        */
-      btn = from_input_event_get_button_from_page_layout(
+      index = from_input_event_get_button_index_from_page_layout(
           &g_tBrowsePageDirAndFileLayout, &ievt);
-      if (btn) {
+      dir_index = index / 2 + g_iStartIndex;
+      if (index == -1 || dir_index >= g_iDirContentsNumber) {
+        clean_button_invert(btn_layout);
+        clean_file_icon(g_tBrowsePageDirAndFileLayout.atLayout);
+        is_use_select = 0;
+        continue;
+      }
+
+      if (g_aptDirContents[dir_index]->ftype == FILETYPE_DIR) {
         /*
-         * open dir or file.
+         * open dir.
          */
-        dir_or_file_button_func(btn);
+        btn = get_button_from_index(g_tBrowsePageDirAndFileLayout.atLayout,
+                                    index);
+
+        if (btn && btn->on_pressed) {
+          btn->on_pressed(btn, &ievt);
+        } else {
+        }
+      } else {
+        /*
+         * open picture file.
+         */
+        file_button_func(btn, &ievt, dir_index);
       }
       continue;
     }
@@ -661,6 +938,7 @@ int browse_page_run(void *params) {
     btn->on_pressed(btn, &ievt);
   }
 
+done:
   return 0;
 
 err_get_dir_contents:

@@ -1,9 +1,14 @@
 #include "ui.h"
 #include <page_manger.h>
+#include <stdio.h>
 #include <string.h>
 
+extern void auto_page_register(void);
 extern void main_page_register(void);
 extern void browse_page_register(void);
+extern void setting_page_register(void);
+extern void interval_page_register(void);
+extern void manual_page_register(void);
 
 page_action *page_atn;
 
@@ -44,6 +49,10 @@ page_action *page(char *name) {
 void pages_system_register(void) {
   main_page_register();
   browse_page_register();
+  setting_page_register();
+  interval_page_register();
+  auto_page_register();
+  manual_page_register();
 }
 
 /*
@@ -52,9 +61,12 @@ void pages_system_register(void) {
 button *from_input_event_get_button_from_page_layout(page_layout *layout,
                                                      input_event *ievt) {
   return from_input_event_get_btn(layout->atLayout, ievt);
-  // button *btn = layout->atLayout;
-  // while (btn->pic.rgn.width) {
-  //   printf("test\n");
-  //   btn++;
-  // }
+}
+
+/*
+ * from input event get btn.
+ */
+int from_input_event_get_button_index_from_page_layout(page_layout *layout,
+                                                       input_event *ievt) {
+  return from_input_event_get_btn_index(layout->atLayout, ievt);
 }

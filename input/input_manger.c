@@ -81,7 +81,7 @@ void *input_recv_thread_func(void *data) {
   input_event ievt;
   int ret;
 
-  while (1) {
+  for (;;) {
     ret = tmp->get_input_event(&ievt);
     if (!ret) {
       /*

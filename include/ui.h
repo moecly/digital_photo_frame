@@ -42,14 +42,26 @@ int init_button(button *btn, char *name, pic_layout *pic, on_draw draw,
                 on_pressed pred);
 int get_button_rgn_data(button *btn, unsigned int *x, unsigned int *y,
                         unsigned int *width, unsigned int *height);
-
+int invert_button(button *btn);
+void clean_button_invert(button *btn);
+int release_button(button *btn);
+int set_pic_disp_pic(pic_layout *pic, char *pic_name);
+int press_button(button *btn);
+int draw_button_pic_from_vd_mem(button *btn, char *pic_name, video_mem *vd_mem);
 button *from_input_event_get_btn(button *btn, input_event *ievt);
-int jump_page_on_pressed(struct button *btn, input_event *ievt, char *page_name,
-                         void *params);
-
+int invert_jump_page_on_pressed(struct button *btn, input_event *ievt,
+                                char *page_name, void *params,
+                                int (*show)(void *), void *show_params);
+int on_pressed_func(struct button *btn, input_event *ievt, void (*func)(void *),
+                    void *params);
+int get_rgn_data(region *rgn, unsigned int *x, unsigned int *y,
+                 unsigned int *width, unsigned int *height);
 int show_button(button *btn, unsigned int color, char *pic_name,
                 video_mem *vd_mem);
-
+int icon_on_draw(struct button *btn, unsigned int color, char *pic_name,
+                 video_mem *vd_mem);
+button *get_button_from_index(button *btn, int index);
+int from_input_event_get_btn_index(button *btn, input_event *ievt);
 
 #if 0
 int init_button(button *btn, char *name, region *rgn, on_draw draw,

@@ -73,7 +73,21 @@ video_mem *get_video_mem(int id, int cur) {
   }
 
   /*
-   * take out any idle.
+   * take out mem free and pic blank.
+   */
+  tmp = video;
+  while (tmp) {
+    if (tmp->mem_status == VMS_FREE && tmp->pic_status == PS_BLANK) {
+      tmp->id = id;
+      tmp->pic_status = PS_BLANK;
+      tmp->mem_status = cur ? VMS_USED_FOR_CUR : VMS_USED_FOR_PREPARE;
+      return tmp;
+    }
+    tmp = tmp->next;
+  }
+
+  /*
+   * take out mem free.
    */
   tmp = video;
   while (tmp) {
@@ -84,6 +98,17 @@ video_mem *get_video_mem(int id, int cur) {
       return tmp;
     }
     tmp = tmp->next;
+  }
+
+  /*
+   * task out any idle.
+   */
+  if (cur) {
+    tmp = video;
+    tmp->id = id;
+    tmp->pic_status = PS_BLANK;
+    tmp->mem_status = VMS_USED_FOR_CUR;
+    return tmp;
   }
 
   return NULL;
@@ -532,3 +557,23 @@ int draw_jpeg(char *name) {
 int flush_display_region(region *rgn, disp_ops *dp_ops, disp_buff *dp_buff) {
   return dp_ops->flush_region(rgn, dp_buff);
 }
+
+/*
+ * get video mem from id.
+ */
+video_mem *get_video_mem_from_id(int id) {
+  video_mem *vd_mem = video;
+
+  while (vd_mem) {
+    if (vd_mem->id == id)
+      return vd_mem;
+    vd_mem = vd_mem->next;
+  }
+
+  return NULL;
+}
+
+/*
+ * get fb dev video mem.
+ */
+video_mem *get_dev_video_mem(void) { return get_video_mem_from_id(0); }

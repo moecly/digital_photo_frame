@@ -29,7 +29,7 @@ int explore_page_run(void *params) {
   /*
    * input processing.
    */
-  while (1) {
+  for (;;) {
     ret = get_input_event(&ievt);
     if (ret)
       continue;

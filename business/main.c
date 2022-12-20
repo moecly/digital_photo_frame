@@ -1,4 +1,6 @@
 #include "common.h"
+#include "pic_fmt_manger.h"
+#include <config.h>
 #include <disp_manger.h>
 #include <font_manger.h>
 #include <input_manger.h>
@@ -7,32 +9,43 @@
 #include <stdlib.h>
 #include <ui.h>
 
-#if 0
+#if 1
 
 int main(int argc, char **argv) {
   int ret;
   disp_buff buff;
-  region rgn;
+  disp_ops *fb_ops;
 
   /*
    * init lcd display.
    */
   display_system_register();
-  ret = select_default_display("lcd");
-  if (ret) {
-    printf("select default display err\n");
+
+  fb_ops = get_display_ops_from_name("lcd");
+  if (!fb_ops) {
+    printf("get_display_ops_from_name err\n");
     return -1;
   }
-  ret = default_display_init();
-  if (ret) {
-    printf("init default display err\n");
+
+  add_disp_queue(fb_ops);
+  if (!fb_ops) {
+    printf("get fb ops err\n");
+    return -1;
   }
 
-  ret = get_display_buffer(&buff);
+  ret = display_system_init();
+  if (ret) {
+    printf("display system init err\n");
+    return -1;
+  }
+
+  ret = get_display_buffer(fb_ops, &buff);
   if (ret) {
     printf("get display buffer err\n");
     return -1;
   }
+
+  ret = pic_fmt_system_register();
 
   /*
    * init network input and lcd input.
@@ -44,27 +57,15 @@ int main(int argc, char **argv) {
    * init font.
    */
   fonts_system_register();
-  fonts_init("simsun.ttc");
+  fonts_init(FONT_PATH);
   sel_def_font("freetype");
 
   /*
    * init page.
    */
+  alloc_video_mem(5);
   pages_system_register();
-
-  /*
-   * draw text.
-   */
-  rgn.left_up_x = rgn.left_up_y = 0;
-  rgn.width = buff.xres;
-  rgn.height = buff.yres;
-  set_font_size(77);
-  draw_region(rgn, 0xffffff);
-  draw_text_in_region("hello world", &rgn, 0x000000);
-  // draw_jpeg("4.jpg");
-  flush_display_region(rgn, &buff);
-
-  return 0;
+  page("main")->run(NULL);
 }
 
 #endif

@@ -1,9 +1,10 @@
+#include "file.h"
 #include "render.h"
+#include <pic_fmt_manger.h>
 #include <pic_operation.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include <stdio.h>
 
 #pragma pack(push)
 #pragma pack(1)
@@ -35,11 +36,13 @@ typedef struct tab_bit_map_info_head {
 /*
  * whether support bmp.
  */
-static int bmp_is_support(unsigned char *file_head) {
+static int bmp_is_support(file_map *file) {
+  unsigned char *file_head = file->file_map_mem;
+
   if (file_head[0] != 0x42 || file_head[1] != 0x4d)
     return 0;
-  else
-    return 1;
+
+  return 1;
 }
 
 /*
@@ -92,7 +95,7 @@ err_bpp:
  * bmp get pixel data.
  * first set th buff->bpp val.
  */
-static int bmp_get_pixel_data(unsigned char *file_head, disp_buff *buff) {
+static int bmp_get_pixel_data(file_map *map, disp_buff *buff) {
   int width;
   int height;
   int bpp;
@@ -103,6 +106,7 @@ static int bmp_get_pixel_data(unsigned char *file_head, disp_buff *buff) {
   unsigned char *puc_dest;
   int line_width_align;
   int line_width_real;
+  unsigned char *file_head = map->file_map_mem;
 
   file = (tab_bit_map_file_head *)file_head;
   info = (tab_bit_map_info_head *)(file_head + sizeof(tab_bit_map_file_head));
@@ -153,7 +157,7 @@ static int bmp_free_pixel_data(disp_buff *buff) {
   return 0;
 }
 
-pic_file_parser bmp_parser = {
+static pic_file_parser bmp_parser = {
     .name = "bmp",
     .free_pixel_data = bmp_free_pixel_data,
     .get_pixel_data = bmp_get_pixel_data,
@@ -163,8 +167,9 @@ pic_file_parser bmp_parser = {
 /*
  * register bmp parser.
  */
-void register_bmp_parser(void) {
+void bmp_parser_register(void) {
   /*
    * register bmp parser.
    */
+  register_pic_file_parser(&bmp_parser);
 }

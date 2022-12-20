@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
   input_init();
   input_device_init();
   
-  while (1) {
+  for (;;) {
     ret = get_input_event(&ievt);
     if (!ret) {
       if (ievt.type == INPUT_TYPE_TOUCH) {

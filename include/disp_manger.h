@@ -62,6 +62,8 @@ int flush_display_region(region *rgn, disp_ops *dp_ops, disp_buff *dp_buff);
 disp_ops *get_display_ops_from_name(const char *name);
 int get_display_buffer(disp_ops *dp_ops, disp_buff *dp_buff);
 video_mem *get_video_mem(int id, int cur);
+video_mem *get_video_mem_from_id(int id);
+video_mem *get_dev_video_mem(void);
 
 #if 0
 int put_pixel(int x, int y, unsigned int color, disp_buff *dp_buff);

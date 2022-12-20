@@ -24,7 +24,7 @@ export CFLAGS LDFLAGS
 TOPDIR := $(shell pwd)
 export TOPDIR
 
-TARGET := test
+TARGET := digital_photo
 
 
 obj-y += display/

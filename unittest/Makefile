@@ -7,3 +7,4 @@ obj-y += font_test.o
 obj-y += ui_test.o
 obj-y += page_test.o
 obj-y += bmp_test.o
+obj-y += disp_jpeg_test.o

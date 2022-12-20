@@ -5,6 +5,7 @@
 #define CFG_FILE "/etc/test_gui/gui.conf"
 #define FB_DEV_NAME "/dev/fb0"
 #define ICON_PATH "/etc/digital/icons"
+#define FONT_PATH "/root/simsun.ttc"
 #define DEFAULT_DIR "/"
 #define LCD_NAME "lcd"
 
